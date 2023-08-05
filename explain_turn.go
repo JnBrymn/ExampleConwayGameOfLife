@@ -9,16 +9,7 @@ import (
 	"github.com/github/copilot-api/pkg/chat/tokens"
 	"github.com/github/copilot-api/pkg/chat/turn/base"
 	"github.com/github/copilot-api/pkg/chat/turn/prompt"
-)
-
-const (
-	header = `Help the user understand the code below.
-Format the response as markdown. Surround code with backticks ` + "`like_this()`" + `.
-Add markdown links to major external sites if they are certain to exist. Do not guess links.
-Only consider the content below. Ignore any previous knowledge of this file.
-Be concise — the explanation should be a single paragraph. The user will ask additional follow-up questions.`
-
-	footer = "Now, provide a brief explanation for this code as requested."
+	"github.com/github/copilot-api/pkg/chat/turn/reference"
 )
 
 // Turn represents an explain turn in a chat thread.
@@ -26,6 +17,7 @@ type Turn struct {
 	*base.Turn
 
 	pb *prompt.Builder
+	finished bool
 }
 
 // NewTurn creates a new explain turn.
@@ -42,16 +34,26 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 		SafetyMessage().
 		PreviousTurns(bt.PrevTurns())
 
-	params := prompt.Message{
-		Header:     header,
-		References: inputRefs,
-		Footer:     footer,
-		Role:       conversation.RoleSystem,
+	refs := bt.References()
+	if len(refs) == 1 {
+		ref := refs[0]
+		pb = pb.AddMessage(systemMessage.Role,
+			// ShortDescriptor() returns things like "snippet" or "symbol"
+			"Help the user understand the " + ref.ShortDescriptor() + " below.\n" +
+			ref.Identifier() +  // things like https://github.com/JnBrymn/ExampleConwayGameOfLife/blob/main/GameOfLife.java#L86-L87
+			"\n" + ref.Text() + "\n" 
+			"\nThis was found in a greater context of:\n" +
+			reference.GreaterContext(ref) // see the last example here https://github.com/github/copilot-api/issues/565#issuecomment-1666237978
+		)	
+	} else {
+		pb = pb.AddMessage(systemMessage.Role,
+			// ShortDescriptor() here returns things like "code" or "snippets" or "symbols"
+			"Help the user understand the " + refs.ShortDescriptor() + " below.\n" +
+			refs.IdentifiersAndText() // see comments above
+			// ignoring greater context because we don't know what that reasonably looks like for multiple references
+		)	
 	}
-	pb.AddReferenceMessage(params)
-
-	userMessage := bt.UserMessage()
-	pb.AddMessage(userMessage.Role, userMessage.Content)
+	pb = pb.AddMessage(userMessage.Role, bt.UserMessage().Content)
 
 	return &Turn{
 		Turn: bt,
@@ -67,4 +69,16 @@ func (t *Turn) Prompt(ctx context.Context) ([]*conversation.Message, error) {
 	}
 
 	return m, nil
+}
+
+// ProcessModelResponse processes the response from the model and adds it to the turn.
+func (t *Turn) ProcessModelResponse(modelResponse string) {
+	// Nothing much to do here
+	t.AddMessage(conversation.NewAssistantMessage(modelResponse))
+	t.finished = true
+}
+
+// Finished returns whether a Turn is finished.
+func (t *Turn) Finished() bool {
+	return t.finished
 }
