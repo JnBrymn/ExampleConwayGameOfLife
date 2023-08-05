@@ -1,0 +1,40 @@
+public class GameOfLife {
+    [...]
+    public GameOfLife(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        grid = new boolean[rows][cols];
+    }
+
+    public void setInitialState(int[][] initialState) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                grid[i][j] = initialState[i][j] == 1;
+            }
+        }
+    }
+    [...]
+    public static void main(String[] args) {
+        int rows = 8;
+        int cols = 10;
+        int[][] initialState = {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+        };
+
+        GameOfLife game = new GameOfLife(rows, cols);
+        game.setInitialState(initialState);
+
+        for (int generation = 1; generation <= 5; generation++) {
+            System.out.println("Generation " +     generation +     ":");
+            game.printGrid();
+            game.nextGeneration();
+        }
+    }
+}
