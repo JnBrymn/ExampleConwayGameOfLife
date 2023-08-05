@@ -86,24 +86,26 @@ func (t *Turn) Prompt(ctx context.Context) ([]*conversation.Message, error) {
 
 // ProcessModelResponse processes the response from the model and adds it to the turn.
 func (t *Turn) ProcessModelResponse(modelResponse string) {
-  if !t.finishedWithAdditionalReferenceRetrieval {
-    additionalReferences := t.parseAdditionalReferences(modelResponse)
-    additionalReferences.hydrate(t.skills)
-
-    pb = t.preamble() // This recreated the top of the prompt just like before
-
-    pb = pb.AddMessage(systemMessage.Role,
+	if !t.finishedWithAdditionalReferenceRetrieval {
+		additionalReferences := t.parseAdditionalReferences(modelResponse)
+		additionalReferences.hydrate(t.skills)
+		
+		pb = t.preamble() // This recreated the top of the prompt just like before
+		
+		pb = pb.AddMessage(systemMessage.Role,
 			"The " + refs.ShortDescriptor() + " below will also likely be helpful." +
 			additionalReferences.IdentifiersAndText()
 		)	
-    pb = pb.AddMessage(userMessage.Role,
-      turn.UserMessage().Content
-    )
-    
-    t.finishedWithAdditionalReferenceRetrieval = true
-  }
-	t.AddMessage(conversation.NewAssistantMessage(modelResponse))
-	t.finishedWithTurn = true
+		pb = pb.AddMessage(userMessage.Role,
+			turn.UserMessage().Content
+		)
+		t.pb = pb
+		
+		t.finishedWithAdditionalReferenceRetrieval = true
+	}
+		t.AddMessage(conversation.NewAssistantMessage(modelResponse))
+		t.finishedWithTurn = true
+	}
 }
 
 func (t *Turn) parseAdditionalReferences(modelResponse string) reference.Group {
