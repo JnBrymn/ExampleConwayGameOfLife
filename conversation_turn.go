@@ -102,7 +102,7 @@ func (t *Turn) ProcessModelResponse(modelResponse string) {
 		t.pb = pb
 		
 		t.finishedWithAdditionalReferenceRetrieval = true
-	}
+	} else {
 		t.AddMessage(conversation.NewAssistantMessage(modelResponse))
 		t.finishedWithTurn = true
 	}
