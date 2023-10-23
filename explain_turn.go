@@ -27,7 +27,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 		return nil, errors.New("no input references")
 	}
 
-	tc := tokens.NewCounter(bt.Tokenizer(), base.ReservedResponseTokens, bt.MaxTokens)
+	tc := tokens.NewCounter(bt.Tokenizer(), base.ReservedResponseTokens, bt.MaxTokens) // TODO: make this better-er
 
 	pb := prompt.
 		NewBuilder(tc).
