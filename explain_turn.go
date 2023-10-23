@@ -61,7 +61,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 	}, nil
 }
 
-// Prompt generates a prompt for a Turn.
+// Prompt generates a prompt for a Turn. // TODO: make this better-er
 func (t *Turn) Prompt(ctx context.Context) ([]*conversation.Message, error) {
 	m, err := t.pb.Build()
 	if err != nil { // TODO: make this better
