@@ -14,7 +14,7 @@ import (
 
 // Turn represents an explain turn in a chat thread.
 type Turn struct {
-	*base.Turn
+	*base.Turn // TODO: make this better
 
 	pb *prompt.Builder
 	finished bool
