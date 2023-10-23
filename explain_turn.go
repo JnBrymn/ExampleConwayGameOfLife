@@ -22,7 +22,7 @@ type Turn struct {
 
 // NewTurn creates a new explain turn.
 func NewTurn(bt *base.Turn) (*Turn, error) {
-	inputRefs := bt.InputReferences()
+	inputRefs := bt.InputReferences() // TODO: make this better
 	if len(inputRefs) == 0 {
 		return nil, errors.New("no input references")
 	}
