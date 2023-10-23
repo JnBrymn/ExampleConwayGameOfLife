@@ -35,7 +35,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 		PreviousTurns(bt.PrevTurns())
 
 	refs := bt.References()
-	if len(refs) == 1 {
+	if len(refs) == 1 { // TODO: make this better
 		ref := refs[0]
 		pb = pb.AddMessage(systemMessage.Role,
 			// ShortDescriptor() returns things like "snippet" or "symbol"
