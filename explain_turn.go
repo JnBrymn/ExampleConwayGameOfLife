@@ -14,7 +14,7 @@ import (
 
 // Turn represents an explain turn in a chat thread.
 type Turn struct {
-	*base.Turn
+	*base.Turn // TODO: make this better
 
 	pb *prompt.Builder
 	finished bool
@@ -22,7 +22,7 @@ type Turn struct {
 
 // NewTurn creates a new explain turn.
 func NewTurn(bt *base.Turn) (*Turn, error) {
-	inputRefs := bt.InputReferences()
+	inputRefs := bt.InputReferences() // TODO: make this better
 	if len(inputRefs) == 0 {
 		return nil, errors.New("no input references")
 	}
@@ -35,23 +35,23 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 		PreviousTurns(bt.PrevTurns())
 
 	refs := bt.References()
-	if len(refs) == 1 {
+	if len(refs) == 1 { // TODO: make this better
 		ref := refs[0]
 		pb = pb.AddMessage(systemMessage.Role,
 			// ShortDescriptor() returns things like "snippet" or "symbol"
 			"Help the user understand the " + ref.ShortDescriptor() + " below.\n" +
 			ref.Identifier() +  // things like https://github.com/JnBrymn/ExampleConwayGameOfLife/blob/main/GameOfLife.java#L86-L87
-			"\n" + ref.Text() + "\n" 
+			"\n" + ref.Text() + "\n"
 			"\nThis was found in a greater context of:\n" +
 			reference.GreaterContext(ref) // see the last example here https://github.com/github/copilot-api/issues/565#issuecomment-1666237978
-		)	
+		)
 	} else {
 		pb = pb.AddMessage(systemMessage.Role,
 			// ShortDescriptor() here returns things like "code" or "snippets" or "symbols"
 			"Help the user understand the " + refs.ShortDescriptor() + " below.\n" +
 			refs.IdentifiersAndText() // see comments above
 			// ignoring greater context because we don't know what that reasonably looks like for multiple references
-		)	
+		)
 	}
 	pb = pb.AddMessage(userMessage.Role, bt.UserMessage().Content)
 
@@ -64,7 +64,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 // Prompt generates a prompt for a Turn.
 func (t *Turn) Prompt(ctx context.Context) ([]*conversation.Message, error) {
 	m, err := t.pb.Build()
-	if err != nil {
+	if err != nil { // TODO: make this better
 		return nil, err
 	}
 
@@ -80,5 +80,5 @@ func (t *Turn) ProcessModelResponse(modelResponse string) {
 
 // Finished returns whether a Turn is finished.
 func (t *Turn) Finished() bool {
-	return t.finished
+	return t.finished // TODO: make this better
 }
