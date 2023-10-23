@@ -47,7 +47,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 		)
 	} else {
 		pb = pb.AddMessage(systemMessage.Role,
-			// ShortDescriptor() here returns things like "code" or "snippets" or "symbols"
+			// ShortDescriptor() here returns things like "code" or "snippets" or "symbols" // TODO: make this better-er
 			"Help the user understand the " + refs.ShortDescriptor() + " below.\n" +
 			refs.IdentifiersAndText() // see comments above
 			// ignoring greater context because we don't know what that reasonably looks like for multiple references
