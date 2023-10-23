@@ -27,7 +27,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 		return nil, errors.New("no input references")
 	}
 
-	tc := tokens.NewCounter(bt.Tokenizer(), base.ReservedResponseTokens, bt.MaxTokens)
+	tc := tokens.NewCounter(bt.Tokenizer(), base.ReservedResponseTokens, bt.MaxTokens) // TODO: make this better-er
 
 	pb := prompt.
 		NewBuilder(tc).
@@ -47,7 +47,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 		)
 	} else {
 		pb = pb.AddMessage(systemMessage.Role,
-			// ShortDescriptor() here returns things like "code" or "snippets" or "symbols"
+			// ShortDescriptor() here returns things like "code" or "snippets" or "symbols" // TODO: make this better-er
 			"Help the user understand the " + refs.ShortDescriptor() + " below.\n" +
 			refs.IdentifiersAndText() // see comments above
 			// ignoring greater context because we don't know what that reasonably looks like for multiple references
@@ -61,7 +61,7 @@ func NewTurn(bt *base.Turn) (*Turn, error) {
 	}, nil
 }
 
-// Prompt generates a prompt for a Turn.
+// Prompt generates a prompt for a Turn. // TODO: make this better-er
 func (t *Turn) Prompt(ctx context.Context) ([]*conversation.Message, error) {
 	m, err := t.pb.Build()
 	if err != nil { // TODO: make this better
